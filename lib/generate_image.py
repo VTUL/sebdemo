@@ -35,7 +35,7 @@ def saveToFile(fileName, fig):
 	pattern = re.compile(r'\.h5$')
 	baseName = pattern.sub('.png', os.path.basename(fileName))
 	imgFileName = os.path.join(os.path.abspath(imgDir), baseName)
-	plt.savefig(imgFileName)
+	fig.savefig(imgFileName)
 	print('Saved the generated figure of {} to {}!'.format(fileName, imgFileName))
 
 # 2D plot the data in the h5 file with x-axis as time in milliseconds)
@@ -61,7 +61,7 @@ def generate_image(fileName):
 			x = numpy.arange(0, 900000, 900000/sample_size)
 			y = sample_tuple
 
-			plt.plot(x, y)
+			plt.plot(x, y, '.')
 			plt.xlabel('millisecond')
 			plt.ylabel(v_label.decode("utf-8"))
 			plt.title('test_figure')
@@ -81,7 +81,7 @@ def generate_image(fileName):
 	
 
 def main():
-	fileName = "data_channel_1_02-Sep-2014-1330.h5"
+	fileName = "data_channel_9_13-Sep-2014-1132.h5"
 
 	generate_image(fileName)
 		
