@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import h5py
 import numpy
 import matplotlib.pyplot as plt
@@ -6,8 +7,8 @@ import time
 # regular expression
 import re
 from pylab import rcParams
-# figure size in inches
-rcParams['figure.figsize'] = 75, 10
+# figure size in inches with the default being 8, 6
+rcParams['figure.figsize'] = 80, 6
 
 # read HDF5 file and raise exceptions
 def readH5File(fileName):
