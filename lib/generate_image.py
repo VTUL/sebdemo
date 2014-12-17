@@ -5,6 +5,9 @@ import os
 import time
 # regular expression
 import re
+from pylab import rcParams
+# figure size in inches
+rcParams['figure.figsize'] = 75, 10
 
 # read HDF5 file and raise exceptions
 def readH5File(fileName):
@@ -25,18 +28,19 @@ def get_dataset(h5_file, key):
 
 # save figure to image file
 # fileName: h5 file
+# the ith minute time frame within 15-minute range
 # fig: the Figure object
-def saveToFile(fileName, fig):
+def saveToFile(fileName, i, fig):
 	# image directory
 	imgDir = 'images'
 	if not os.path.exists(imgDir):
 		os.makedirs(imgDir)
 
 	pattern = re.compile(r'\.h5$')
-	baseName = pattern.sub('.png', os.path.basename(fileName))
+	imgNameTail = '_' + str(i+1) + '.png'
+	baseName = pattern.sub(imgNameTail, os.path.basename(fileName))
 	imgFileName = os.path.join(os.path.abspath(imgDir), baseName)
 	fig.savefig(imgFileName)
-	print('Saved the generated figure of {} to {}!'.format(fileName, imgFileName))
 
 # 2D plot the data in the h5 file with x-axis as time in milliseconds)
 # and y-axis as data unit in acceleration, g 
@@ -58,16 +62,21 @@ def generate_image(fileName):
 					"average:", numpy.mean(sample_tuple), 
 					"median:", numpy.median(sample_tuple))
 
-			x = numpy.arange(0, 900000, 900000/sample_size)
-			y = sample_tuple
+			# draw 15 figure corresponding to each 1-minute time frame
+			for i, arr in enumerate(numpy.split(sample_tuple, 150)):
+				x = numpy.arange(0, 900000/150, 900000/sample_size)
+				y = arr
 
-			plt.plot(x, y, '.')
-			plt.xlabel('millisecond')
-			plt.ylabel(v_label.decode("utf-8"))
-			plt.title('test_figure')
-			#plt.show()
-			fig = plt.gcf()
-			saveToFile(fileName, fig)
+				# default marker is solid line
+				plt.plot(x, y)
+				plt.xlabel('millisecond')
+				plt.ylabel(v_label.decode("utf-8"))
+				plt.title('figure' + str(i+1))
+			
+				fig = plt.gcf()
+				saveToFile(fileName, i, fig)
+				plt.clf()
+				plt.close()
 		toc = time.clock()
 		print("Total processing time:", toc-tic)
 		
