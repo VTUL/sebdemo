@@ -1,6 +1,9 @@
 #!/usr/bin/python
 import h5py
 import numpy
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import time
@@ -49,7 +52,12 @@ def saveToFile(fileName, i, fig):
 def generate_image(fileName):
 	try:
 		f = readH5File(fileName)
-		v_label = f['/'].attrs.get('units')
+		attrs = f['/'].attrs
+		attr_items = attrs.items()
+		
+		for attr in attr_items:
+			print("{}: {}".format(attr[0], attr[1]))
+		v_label = attrs.get('units')
 		tic = time.clock()
 		# get one of the dataset
 		for key in f.keys():
